@@ -2,9 +2,29 @@
 name = "namespace-manager-tui"
 version = "0.1.0"
 edition = "2024"
+authors = ["Josh"]
+description = "A Rust terminal dashboard (TUI) for Linux network namespace management and system observability. "
+repository = "https://github.com/last1chosen/namespace-manager-tui"
+license = "MIT"
+keywords = ["cli", "netns", "system-administration", "rust terminal"]
+categories = ["command-line-utilities", "network-programming"]
+readme = "README.md"
+
+[[bin]]
+name = "nsm"
+path = "src/main.rs"
 
 [dependencies]
 crossterm = "0.29.0"
 ratatui = "0.29.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
+
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+
+
