@@ -75,14 +75,7 @@ pub fn render_detail(
 
     match detail_state.active_tab {
         DetailTab::Network => {
-            render_network_tab(
-                f,
-                detail_state,
-                info,
-                namespaces,
-                current_ns,
-                right_chunks[1],
-            );
+            render_network_tab(f, detail_state, info, right_chunks[1]);
         }
         DetailTab::Internals => {
             render_internals_tab(

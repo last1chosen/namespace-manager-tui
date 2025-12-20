@@ -83,28 +83,20 @@ mod tests {
     use ratatui::{buffer::Buffer, layout::Rect, widgets::Widget};
 
     use super::*;
-    use crate::{app::ViewState, models::DetailState};
     #[test]
     fn namespace_table_display_correctly() {
-        let app = App {
-            namespaces: vec![NetworkNamespace {
-                name: "test-ns".to_string(),
-                ns_type: NamespaceType::Container,
-                process_names: vec!["nginx".to_string()],
-                num_interfaces: 2,
-                inode: 6454,
-                ns_path: "path/one".to_string(),
-                primary_pid: Some(123),
-                ip_prefixes: vec!["ip_1".to_string(), "ip_2".to_string()],
-            }],
-            table_state: Default::default(),
-            view_state: ViewState::List,
-            exit: false,
-            detail_state: DetailState::default(),
-            is_loading: false,
-        };
+        let namespaces = vec![NetworkNamespace {
+            name: "test-ns".to_string(),
+            ns_type: NamespaceType::Container,
+            process_names: vec!["nginx".to_string()],
+            num_interfaces: 2,
+            inode: 6454,
+            ns_path: "path/one".to_string(),
+            primary_pid: Some(123),
+            ip_prefixes: vec!["ip_1".to_string(), "ip_2".to_string()],
+        }];
 
-        let table = build_namespace_table(&app.namespaces);
+        let table = build_namespace_table(&namespaces);
 
         let mut buf = Buffer::empty(Rect::new(0, 0, 50, 5));
         Widget::render(table, *buf.area(), &mut buf);

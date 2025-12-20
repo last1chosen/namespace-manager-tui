@@ -15,14 +15,12 @@ use nftables_widget::make_nftables_widget;
 use routing_table_widget::make_routing_table_widget;
 use subnet_peers_widget::make_subnet_peers;
 
-use crate::models::{DetailState, NamespaceDetail, NetworkNamespace};
+use crate::models::{DetailState, NamespaceDetail};
 
 pub fn render_network_tab(
     f: &mut Frame,
     state: &mut DetailState,
     info: &NamespaceDetail,
-    namespaces: &[NetworkNamespace],
-    current_ns: &NetworkNamespace,
     area: Rect,
 ) {
     let chunks = Layout::default()
@@ -63,5 +61,5 @@ pub fn render_network_tab(
 
     f.render_widget(make_nftables_widget(&info.firewall), bottom_row[0]);
 
-    f.render_widget(make_subnet_peers(current_ns, namespaces), bottom_row[1]);
+    f.render_widget(make_subnet_peers(info), bottom_row[1]);
 }

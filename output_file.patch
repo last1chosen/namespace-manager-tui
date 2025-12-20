@@ -1,0 +1,2411 @@
+diff --git a/Cargo.lock b/Cargo.lock
+index 42a7303..977635e 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -2,6 +2,15 @@
+ # It is not intended for manual editing.
+ version = 4
+ 
++[[package]]
++name = "aho-corasick"
++version = "1.1.4"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ddd31a130427c27518df266943a5308ed92d4b226cc639f5a8f1002816174301"
++dependencies = [
++ "memchr",
++]
++
+ [[package]]
+ name = "allocator-api2"
+ version = "0.2.21"
+@@ -201,6 +210,55 @@ version = "0.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
+ 
++[[package]]
++name = "futures-core"
++version = "0.3.31"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "05f29059c0c2090612e8d742178b0580d2dc940c837851ad723096f87af6663e"
++
++[[package]]
++name = "futures-macro"
++version = "0.3.31"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "162ee34ebcb7c64a8abebc059ce0fee27c2262618d7b60ed8faf72fef13c3650"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn",
++]
++
++[[package]]
++name = "futures-task"
++version = "0.3.31"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f90f7dce0722e95104fcb095585910c0977252f286e354b5e3bd38902cd99988"
++
++[[package]]
++name = "futures-timer"
++version = "3.0.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f288b0a4f20f9a56b5d1da57e2227c661b7b16168e2f72365f57b63326e29b24"
++
++[[package]]
++name = "futures-util"
++version = "0.3.31"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "9fa08315bb612088cc391249efdc3bc77536f16c91f6cf495e6fbe85b20a4a81"
++dependencies = [
++ "futures-core",
++ "futures-macro",
++ "futures-task",
++ "pin-project-lite",
++ "pin-utils",
++ "slab",
++]
++
++[[package]]
++name = "glob"
++version = "0.3.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
++
+ [[package]]
+ name = "hashbrown"
+ version = "0.15.5"
+@@ -212,6 +270,12 @@ dependencies = [
+  "foldhash",
+ ]
+ 
++[[package]]
++name = "hashbrown"
++version = "0.16.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100"
++
+ [[package]]
+ name = "heck"
+ version = "0.5.0"
+@@ -224,6 +288,16 @@ version = "1.0.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
+ 
++[[package]]
++name = "indexmap"
++version = "2.12.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "0ad4bb2b565bca0645f4d68c5c9af97fba094e9791da685bf83cb5f3ce74acf2"
++dependencies = [
++ "equivalent",
++ "hashbrown 0.16.1",
++]
++
+ [[package]]
+ name = "indoc"
+ version = "2.0.7"
+@@ -261,6 +335,12 @@ version = "1.0.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
+ 
++[[package]]
++name = "lazy_static"
++version = "1.5.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
++
+ [[package]]
+ name = "libc"
+ version = "0.2.178"
+@@ -306,7 +386,16 @@ version = "0.12.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "234cf4f4a04dc1f57e24b96cc0cd600cf2af460d4161ac5ecdd0af8e1f3b2a38"
+ dependencies = [
+- "hashbrown",
++ "hashbrown 0.15.5",
++]
++
++[[package]]
++name = "matchers"
++version = "0.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "d1525a2a28c7f4fa0fc98bb91ae755d1e2d1505079e05539e35bc876b5d65ae9"
++dependencies = [
++ "regex-automata",
+ ]
+ 
+ [[package]]
+@@ -333,10 +422,29 @@ version = "0.1.0"
+ dependencies = [
+  "crossterm 0.29.0",
+  "ratatui",
++ "rstest",
+  "serde",
+  "serde_json",
++ "thiserror",
++ "tracing",
++ "tracing-subscriber",
++]
++
++[[package]]
++name = "nu-ansi-term"
++version = "0.50.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
++dependencies = [
++ "windows-sys 0.61.2",
+ ]
+ 
++[[package]]
++name = "once_cell"
++version = "1.21.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
++
+ [[package]]
+ name = "parking_lot"
+ version = "0.12.5"
+@@ -366,6 +474,27 @@ version = "1.0.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
+ 
++[[package]]
++name = "pin-project-lite"
++version = "0.2.16"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3b3cff922bd51709b605d9ead9aa71031d81447142d828eb4a6eba76fe619f9b"
++
++[[package]]
++name = "pin-utils"
++version = "0.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
++
++[[package]]
++name = "proc-macro-crate"
++version = "3.4.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "219cb19e96be00ab2e37d6e299658a0cfa83e52429179969b0f0121b4ac46983"
++dependencies = [
++ "toml_edit",
++]
++
+ [[package]]
+ name = "proc-macro2"
+ version = "1.0.103"
+@@ -414,6 +543,70 @@ dependencies = [
+  "bitflags",
+ ]
+ 
++[[package]]
++name = "regex"
++version = "1.12.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "843bc0191f75f3e22651ae5f1e72939ab2f72a4bc30fa80a066bd66edefc24d4"
++dependencies = [
++ "aho-corasick",
++ "memchr",
++ "regex-automata",
++ "regex-syntax",
++]
++
++[[package]]
++name = "regex-automata"
++version = "0.4.13"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "5276caf25ac86c8d810222b3dbb938e512c55c6831a10f3e6ed1c93b84041f1c"
++dependencies = [
++ "aho-corasick",
++ "memchr",
++ "regex-syntax",
++]
++
++[[package]]
++name = "regex-syntax"
++version = "0.8.8"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7a2d987857b319362043e95f5353c0535c1f58eec5336fdfcf626430af7def58"
++
++[[package]]
++name = "relative-path"
++version = "1.9.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ba39f3699c378cd8970968dcbff9c43159ea4cfbd88d43c00b22f2ef10a435d2"
++
++[[package]]
++name = "rstest"
++version = "0.26.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f5a3193c063baaa2a95a33f03035c8a72b83d97a54916055ba22d35ed3839d49"
++dependencies = [
++ "futures-timer",
++ "futures-util",
++ "rstest_macros",
++]
++
++[[package]]
++name = "rstest_macros"
++version = "0.26.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "9c845311f0ff7951c5506121a9ad75aec44d083c31583b2ea5a30bcb0b0abba0"
++dependencies = [
++ "cfg-if",
++ "glob",
++ "proc-macro-crate",
++ "proc-macro2",
++ "quote",
++ "regex",
++ "relative-path",
++ "rustc_version",
++ "syn",
++ "unicode-ident",
++]
++
+ [[package]]
+ name = "rustc_version"
+ version = "0.4.1"
+@@ -516,6 +709,15 @@ dependencies = [
+  "serde_core",
+ ]
+ 
++[[package]]
++name = "sharded-slab"
++version = "0.1.7"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6"
++dependencies = [
++ "lazy_static",
++]
++
+ [[package]]
+ name = "signal-hook"
+ version = "0.3.18"
+@@ -546,6 +748,12 @@ dependencies = [
+  "libc",
+ ]
+ 
++[[package]]
++name = "slab"
++version = "0.4.11"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7a2ae44ef20feb57a68b23d846850f861394c2e02dc425a50098ae8c90267589"
++
+ [[package]]
+ name = "smallvec"
+ version = "1.15.1"
+@@ -597,6 +805,126 @@ dependencies = [
+  "unicode-ident",
+ ]
+ 
++[[package]]
++name = "thiserror"
++version = "2.0.17"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f63587ca0f12b72a0600bcba1d40081f830876000bb46dd2337a3051618f4fc8"
++dependencies = [
++ "thiserror-impl",
++]
++
++[[package]]
++name = "thiserror-impl"
++version = "2.0.17"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "3ff15c8ecd7de3849db632e14d18d2571fa09dfc5ed93479bc4485c7a517c913"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn",
++]
++
++[[package]]
++name = "thread_local"
++version = "1.1.9"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f60246a4944f24f6e018aa17cdeffb7818b76356965d03b07d6a9886e8962185"
++dependencies = [
++ "cfg-if",
++]
++
++[[package]]
++name = "toml_datetime"
++version = "0.7.5+spec-1.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "92e1cfed4a3038bc5a127e35a2d360f145e1f4b971b551a2ba5fd7aedf7e1347"
++dependencies = [
++ "serde_core",
++]
++
++[[package]]
++name = "toml_edit"
++version = "0.23.10+spec-1.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "84c8b9f757e028cee9fa244aea147aab2a9ec09d5325a9b01e0a49730c2b5269"
++dependencies = [
++ "indexmap",
++ "toml_datetime",
++ "toml_parser",
++ "winnow",
++]
++
++[[package]]
++name = "toml_parser"
++version = "1.0.6+spec-1.1.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a3198b4b0a8e11f09dd03e133c0280504d0801269e9afa46362ffde1cbeebf44"
++dependencies = [
++ "winnow",
++]
++
++[[package]]
++name = "tracing"
++version = "0.1.44"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "63e71662fa4b2a2c3a26f570f037eb95bb1f85397f3cd8076caed2f026a6d100"
++dependencies = [
++ "pin-project-lite",
++ "tracing-attributes",
++ "tracing-core",
++]
++
++[[package]]
++name = "tracing-attributes"
++version = "0.1.31"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "7490cfa5ec963746568740651ac6781f701c9c5ea257c58e057f3ba8cf69e8da"
++dependencies = [
++ "proc-macro2",
++ "quote",
++ "syn",
++]
++
++[[package]]
++name = "tracing-core"
++version = "0.1.36"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a"
++dependencies = [
++ "once_cell",
++ "valuable",
++]
++
++[[package]]
++name = "tracing-log"
++version = "0.2.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ee855f1f400bd0e5c02d150ae5de3840039a3f54b025156404e34c23c03f47c3"
++dependencies = [
++ "log",
++ "once_cell",
++ "tracing-core",
++]
++
++[[package]]
++name = "tracing-subscriber"
++version = "0.3.22"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "2f30143827ddab0d256fd843b7a66d164e9f271cfa0dde49142c5ca0ca291f1e"
++dependencies = [
++ "matchers",
++ "nu-ansi-term",
++ "once_cell",
++ "regex-automata",
++ "sharded-slab",
++ "smallvec",
++ "thread_local",
++ "tracing",
++ "tracing-core",
++ "tracing-log",
++]
++
+ [[package]]
+ name = "unicode-ident"
+ version = "1.0.22"
+@@ -632,6 +960,12 @@ version = "0.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "1fc81956842c57dac11422a97c3b8195a1ff727f06e85c84ed2e8aa277c9a0fd"
+ 
++[[package]]
++name = "valuable"
++version = "0.1.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65"
++
+ [[package]]
+ name = "wasi"
+ version = "0.11.1+wasi-snapshot-preview1"
+@@ -747,3 +1081,12 @@ name = "windows_x86_64_msvc"
+ version = "0.52.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
++
++[[package]]
++name = "winnow"
++version = "0.7.14"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "5a5364e9d77fcdeeaa6062ced926ee3381faa2ee02d3eb83a5c27a8825540829"
++dependencies = [
++ "memchr",
++]
+diff --git a/Cargo.toml b/Cargo.toml
+index 45b71d5..5cb29dc 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -17,8 +17,12 @@ path = "src/main.rs"
+ [dependencies]
+ crossterm = "0.29.0"
+ ratatui = "0.29.0"
++rstest = "0.26.1"
+ serde = { version = "1.0.228", features = ["derive"] }
+ serde_json = "1.0.145"
++thiserror = "2.0.17"
++tracing = "0.1.44"
++tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+ 
+ [profile.release]
+ strip = true
+diff --git a/src/app.rs b/src/app.rs
+index aad240d..cedf9bf 100644
+--- a/src/app.rs
++++ b/src/app.rs
+@@ -1,13 +1,22 @@
+ mod navigation;
++mod scroll;
+ 
+-use std::{io, time::Duration};
++use std::{
++    io,
++    sync::{
++        Arc,
++        mpsc::{self, Receiver},
++    },
++    thread,
++    time::Duration,
++};
+ 
+ use crossterm::event::{self, Event, KeyCode};
+ use ratatui::DefaultTerminal;
+ use ratatui::widgets::TableState;
+ 
+ use crate::models::{DetailSection, DetailState, DetailTab, NamespaceDetail, NetworkNamespace};
+-use crate::scanner::{fetch_details, gather_namespaces};
++use crate::scanner::{Inode, NamespaceService, NsResult};
+ use crate::ui::render_ui;
+ 
+ #[derive(Debug)]
+@@ -17,62 +26,100 @@ pub enum ViewState {
+ }
+ 
+ pub struct App {
+-    pub namespaces: Vec<NetworkNamespace>,
++    pub service: Arc<NamespaceService>,
++    pub namespaces: Arc<Vec<NetworkNamespace>>,
+     pub table_state: TableState,
+     pub view_state: ViewState,
+     pub exit: bool,
+     pub detail_state: DetailState,
+     pub is_loading: bool,
++    pub warnings: Vec<String>,
++    pub ns_rx: Option<Receiver<NsResult<Vec<NetworkNamespace>>>>,
++    pub detail_rx: Option<Receiver<NsResult<(NamespaceDetail, Vec<String>)>>>,
+ }
+ 
+ impl App {
+-    pub fn new() -> io::Result<App> {
+-        let namespaces = gather_namespaces()?;
++    pub fn new() -> NsResult<App> {
++        let service = Arc::new(NamespaceService::new()?);
++        let namespaces = Arc::new(service.gather_all_namespaces()?);
++
+         let mut table_state = TableState::default();
+         if !namespaces.is_empty() {
+             table_state.select(Some(0));
+         }
+ 
+         Ok(App {
++            service,
+             namespaces,
+             table_state,
+             view_state: ViewState::List,
+             exit: false,
+             detail_state: DetailState::default(),
+             is_loading: false,
++            warnings: Vec::new(),
++            ns_rx: None,
++            detail_rx: None,
+         })
+     }
+ 
+     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
+         while !self.exit {
++            self.check_background_tasks();
+             terminal.draw(|f| render_ui(f, self))?;
+             self.handle_events()?;
+         }
+         Ok(())
+     }
+ 
++    fn check_background_tasks(&mut self) {
++        if let Some(ref rx) = self.ns_rx {
++            if let Ok(result) = rx.try_recv() {
++                match result {
++                    Ok(new_ns) => {
++                        let selected = self.table_state.selected();
++                        self.namespaces = Arc::new(new_ns);
++                        // Attempt to maintain selection index
++                        if let Some(idx) = selected {
++                            if idx < self.namespaces.len() {
++                                self.table_state.select(Some(idx));
++                            } else if !self.namespaces.is_empty() {
++                                self.table_state.select(Some(0));
++                            }
++                        }
++                    }
++                    Err(e) => self.warnings.push(format!("Namespace scan failed: {}", e)),
++                }
++                self.ns_rx = None;
++                self.is_loading = false;
++            }
++        }
++
++        if let Some(ref rx) = self.detail_rx {
++            if let Ok(result) = rx.try_recv() {
++                match result {
++                    Ok((details, warnings)) => {
++                        self.view_state = ViewState::Detail(details);
++                        // Surface non-fatal errors collected during scan
++                        self.detail_state.env_vars.select(None);
++                        self.warnings = warnings;
++                    }
++                    Err(e) => self.warnings.push(format!("Detail fetch failed: {}", e)),
++                }
++                self.detail_rx = None;
++                self.is_loading = false;
++            }
++        }
++    }
++
+     fn handle_events(&mut self) -> io::Result<()> {
+-        if event::poll(Duration::from_millis(250))? {
++        if event::poll(Duration::from_millis(100))? {
+             if let Event::Key(key) = event::read()? {
++                if !self.warnings.is_empty() {
++                    self.warnings.clear();
++                }
+                 if let ViewState::Detail(_) = self.view_state {
+                     if self.detail_state.is_typing_filter {
+-                        match key.code {
+-                            KeyCode::Enter => {
+-                                self.detail_state.is_typing_filter = false;
+-                            }
+-                            KeyCode::Char('/') => {
+-                                self.detail_state.is_typing_filter = false;
+-                            }
+-                            KeyCode::Char(c) => {
+-                                self.detail_state.filter_input.push(c);
+-                                self.detail_state.processes.select(Some(0));
+-                            }
+-                            KeyCode::Backspace => {
+-                                self.detail_state.filter_input.pop();
+-                                self.detail_state.processes.select(Some(0));
+-                            }
+-                            _ => {}
+-                        }
++                        self.handle_filter_input(key.code);
+                         return Ok(());
+                     }
+                 }
+@@ -85,7 +132,7 @@ impl App {
+                     }
+ 
+                     KeyCode::Char('q') => self.exit = true,
+-                    KeyCode::Char('r') => self.refresh()?,
++                    KeyCode::Char('r') => self.refresh(),
+                     KeyCode::Down => match self.view_state {
+                         ViewState::List => self.next(),
+                         ViewState::Detail(_) => self.scroll_detail(false),
+@@ -98,12 +145,12 @@ impl App {
+                     KeyCode::Esc => self.on_escape(),
+                     KeyCode::Tab => self.namespace_detail_focus(),
+                     KeyCode::Right => {
++                        self.detail_state.focus = DetailSection::Processes;
+                         self.detail_state.active_tab = DetailTab::Internals;
+-                        self.detail_state.focus = DetailSection::Processes
+                     }
+                     KeyCode::Left => {
++                        self.detail_state.focus = DetailSection::Processes;
+                         self.detail_state.active_tab = DetailTab::Network;
+-                        self.detail_state.focus = DetailSection::Processes
+                     }
+                     _ => {}
+                 }
+@@ -111,24 +158,72 @@ impl App {
+         }
+         Ok(())
+     }
++    pub fn refresh(&mut self) {
++        if self.is_loading {
++            return;
++        }
+ 
+-    fn refresh(&mut self) -> io::Result<()> {
+-        let selected = self.table_state.selected();
+-        self.namespaces = gather_namespaces()?;
++        self.is_loading = true;
++        self.warnings.clear();
+ 
+-        if let Some(idx) = selected {
+-            if idx < self.namespaces.len() {
+-                self.table_state.select(Some(idx));
+-                if let ViewState::Detail(_) = self.view_state {
+-                    if let Some(ns) = self.namespaces.get(idx) {
+-                        let new_details = fetch_details(&ns.ns_path, ns.inode);
+-                        self.view_state = ViewState::Detail(new_details);
+-                    }
++        let (ns_tx, ns_rx) = mpsc::channel();
++        self.ns_rx = Some(ns_rx);
++
++        let service_list = Arc::clone(&self.service);
++        thread::spawn(move || {
++            let result = service_list.gather_all_namespaces();
++            let _ = ns_tx.send(result);
++        });
++
++        if let ViewState::Detail(_) = self.view_state {
++            if let Some(idx) = self.table_state.selected() {
++                if let Some(ns) = self.namespaces.get(idx) {
++                    let (d_tx, d_rx) = mpsc::channel();
++                    self.detail_rx = Some(d_rx);
++
++                    let service = Arc::clone(&self.service);
++                    let path = ns.ns_path.clone();
++                    let inode = Inode(ns.inode);
++                    let all_ns_snapshot = Arc::clone(&self.namespaces);
++
++                    thread::spawn(move || {
++                        match service.fetch_details(&path, inode) {
++                            Ok((mut details, warnings)) => {
++                                // Step 2: Extract IPs found during fetch to resolve peers
++                                let current_ips: Vec<String> = details
++                                    .interfaces
++                                    .iter()
++                                    .filter(|i| i.ip != "N/A")
++                                    .map(|i| i.ip.clone())
++                                    .collect();
++
++                                details.peers =
++                                    service.resolve_peers(&current_ips, &all_ns_snapshot, inode);
++
++                                let _ = d_tx.send(Ok((details, warnings)));
++                            }
++                            Err(e) => {
++                                let _ = d_tx.send(Err(e));
++                            }
++                        }
++                    });
+                 }
+-            } else if !self.namespaces.is_empty() {
+-                self.table_state.select(Some(0));
+             }
+         }
+-        Ok(())
++    }
++
++    fn handle_filter_input(&mut self, code: KeyCode) {
++        match code {
++            KeyCode::Enter | KeyCode::Char('/') => self.detail_state.is_typing_filter = false,
++            KeyCode::Char(c) => {
++                self.detail_state.filter_input.push(c);
++                self.detail_state.processes.select(Some(0));
++            }
++            KeyCode::Backspace => {
++                self.detail_state.filter_input.pop();
++                self.detail_state.processes.select(Some(0));
++            }
++            _ => {}
++        }
+     }
+ }
+diff --git a/src/app/navigation.rs b/src/app/navigation.rs
+index d3d1615..07d933a 100644
+--- a/src/app/navigation.rs
++++ b/src/app/navigation.rs
+@@ -1,18 +1,58 @@
+-use ratatui::widgets::{ListState, TableState};
++use std::sync::{Arc, mpsc};
++use std::thread;
+ 
+ use crate::app::ViewState;
+ use crate::models::{DetailSection, DetailTab};
+-use crate::scanner::fetch_details;
++use crate::scanner::Inode;
+ 
+ use super::App;
+ 
+ impl App {
++    /// Handles the Enter key: Transitions from List to Detail view by spawning
++    /// a background inspection task.
+     pub fn on_enter(&mut self) {
++        // Prevent overlapping requests if a scan is already in progress
++        if self.is_loading {
++            return;
++        }
++
+         if let ViewState::List = self.view_state {
+             if let Some(idx) = self.table_state.selected() {
+                 if let Some(ns) = self.namespaces.get(idx) {
+-                    let detail = fetch_details(&ns.ns_path, ns.inode);
+-                    self.view_state = ViewState::Detail(detail);
++                    self.is_loading = true;
++                    self.warnings.clear();
++
++                    let (d_tx, d_rx) = mpsc::channel();
++                    self.detail_rx = Some(d_rx);
++
++                    let service = Arc::clone(&self.service);
++                    let path = ns.ns_path.clone();
++                    let inode = Inode(ns.inode);
++                    let all_ns_snapshot = Arc::clone(&self.namespaces);
++
++                    thread::spawn(move || {
++                        // Step 1: Fetch raw data from the namespace
++                        match service.fetch_details(&path, inode) {
++                            Ok((mut details, warnings)) => {
++                                // Step 2: Extract IPs found during fetch to resolve peers
++                                let current_ips: Vec<String> = details
++                                    .interfaces
++                                    .iter()
++                                    .filter(|i| i.ip != "N/A")
++                                    .map(|i| i.ip.clone())
++                                    .collect();
++
++                                // Step 3: Decoupled peer resolution
++                                details.peers =
++                                    service.resolve_peers(&current_ips, &all_ns_snapshot, inode);
++
++                                let _ = d_tx.send(Ok((details, warnings)));
++                            }
++                            Err(e) => {
++                                let _ = d_tx.send(Err(e));
++                            }
++                        }
++                    });
+                 }
+             }
+         }
+@@ -21,9 +61,14 @@ impl App {
+     pub fn on_escape(&mut self) {
+         if let ViewState::Detail(_) = self.view_state {
+             self.view_state = ViewState::List;
++
++            self.detail_rx = None;
++            self.is_loading = false;
++            self.warnings.clear();
+         }
+     }
+ 
++    /// Selects the next item in the namespace list.
+     pub fn next(&mut self) {
+         if let ViewState::List = self.view_state {
+             if self.namespaces.is_empty() {
+@@ -43,6 +88,7 @@ impl App {
+         }
+     }
+ 
++    /// Selects the previous item in the namespace list.
+     pub fn previous(&mut self) {
+         if let ViewState::List = self.view_state {
+             if self.namespaces.is_empty() {
+@@ -62,6 +108,8 @@ impl App {
+         }
+     }
+ 
++    /// Rotates focus between different UI sections (Processes, Interfaces, etc.)
++    /// within the Detail view.
+     pub fn namespace_detail_focus(&mut self) {
+         if let ViewState::Detail(_) = self.view_state {
+             self.detail_state.focus = match self.detail_state.active_tab {
+@@ -72,7 +120,6 @@ impl App {
+                     DetailSection::Ports => DetailSection::Processes,
+                     _ => DetailSection::Processes,
+                 },
+-
+                 DetailTab::Internals => match self.detail_state.focus {
+                     DetailSection::Processes => DetailSection::EnvVars,
+                     DetailSection::EnvVars => DetailSection::Processes,
+@@ -81,274 +128,4 @@ impl App {
+             };
+         }
+     }
+-
+-    pub fn scroll_detail(&mut self, up: bool) {
+-        if let ViewState::Detail(details) = &self.view_state {
+-            match self.detail_state.focus {
+-                DetailSection::Interfaces => scroll_table(
+-                    &mut self.detail_state.interfaces,
+-                    details.interfaces.len(),
+-                    up,
+-                ),
+-                DetailSection::Routes => {
+-                    scroll_table(&mut self.detail_state.routes, details.routes.len(), up)
+-                }
+-                DetailSection::Ports => {
+-                    scroll_table(&mut self.detail_state.ports, details.ports.len(), up)
+-                }
+-                DetailSection::Processes => {
+-                    let filtered_count = if self.detail_state.filter_input.is_empty() {
+-                        details.processes.len()
+-                    } else {
+-                        let filter = self.detail_state.filter_input.to_lowercase();
+-                        details
+-                            .processes
+-                            .iter()
+-                            .filter(|p| {
+-                                p.name.to_lowercase().contains(&filter)
+-                                    || p.pid.to_string().contains(&filter)
+-                            })
+-                            .count()
+-                    };
+-
+-                    scroll_list(&mut self.detail_state.processes, filtered_count, up);
+-                }
+-                DetailSection::EnvVars => {
+-                    if let Some(proc_idx) = self.detail_state.processes.selected() {
+-                        if let Some(proc) = details.processes.get(proc_idx) {
+-                            scroll_table(&mut self.detail_state.env_vars, proc.env_vars.len(), up);
+-                        }
+-                    }
+-                }
+-            }
+-        }
+-    }
+-}
+-
+-fn scroll_table(state: &mut TableState, count: usize, up: bool) {
+-    if count == 0 {
+-        return;
+-    };
+-    let i = match state.selected() {
+-        Some(i) => {
+-            if up {
+-                if i == 0 { count - 1 } else { i - 1 }
+-            } else {
+-                if i >= count - 1 { 0 } else { i + 1 }
+-            }
+-        }
+-        None => 0,
+-    };
+-    state.select(Some(i));
+-}
+-
+-fn scroll_list(state: &mut ListState, len: usize, up: bool) {
+-    if len == 0 {
+-        return;
+-    }
+-    let i = match state.selected() {
+-        Some(i) => {
+-            if up {
+-                if i == 0 { len - 1 } else { i - 1 }
+-            } else {
+-                if i >= len - 1 { 0 } else { i + 1 }
+-            }
+-        }
+-        None => 0,
+-    };
+-    state.select(Some(i))
+-}
+-
+-#[cfg(test)]
+-mod tests {
+-
+-    use super::*;
+-    use crate::models::{
+-        DetailState, FirewallInfo, NamespaceDetail, NamespaceType, NetworkNamespace,
+-    };
+-    use ratatui::widgets::TableState;
+-
+-    fn create_test_namespace() -> Vec<NetworkNamespace> {
+-        vec![
+-            NetworkNamespace {
+-                name: "default".to_string(),
+-                ns_type: NamespaceType::Container,
+-                inode: 4026531840,
+-                ns_path: "/proc/1/ns/net".to_string(),
+-                num_interfaces: 3,
+-                process_names: vec!["systemd".to_string()],
+-                primary_pid: Some(1),
+-                ip_prefixes: vec!["127.0.0.1/8".to_string()],
+-            },
+-            NetworkNamespace {
+-                name: "container1".to_string(),
+-                ns_type: NamespaceType::Container,
+-                inode: 4026532448,
+-                ns_path: "/proc/1234/ns/net".to_string(),
+-                num_interfaces: 2,
+-                process_names: vec!["docker".to_string()],
+-                primary_pid: Some(1234),
+-                ip_prefixes: vec!["172.17.0.0/16".to_string()],
+-            },
+-            NetworkNamespace {
+-                name: "container2".to_string(),
+-                ns_type: NamespaceType::Container,
+-                inode: 4026532448,
+-                ns_path: "/proc/1235/ns/net".to_string(),
+-                num_interfaces: 5,
+-                process_names: vec!["docker".to_string()],
+-                primary_pid: Some(1235),
+-                ip_prefixes: vec!["172.17.0.2/16".to_string()],
+-            },
+-        ]
+-    }
+-
+-    fn create_test_namespace_detail() -> NamespaceDetail {
+-        NamespaceDetail {
+-            interfaces: vec![],
+-            routes: vec![],
+-            processes: vec![],
+-            firewall: FirewallInfo {
+-                chains: 10,
+-                rules: 10,
+-            },
+-            ports: vec![],
+-        }
+-    }
+-
+-    fn create_test_app() -> App {
+-        let mut table_state = TableState::default();
+-        table_state.select(Some(0));
+-        App {
+-            view_state: ViewState::List,
+-            namespaces: create_test_namespace(),
+-            table_state: table_state,
+-            exit: false,
+-            detail_state: DetailState::default(),
+-            is_loading: false,
+-        }
+-    }
+-
+-    #[test]
+-    fn test_on_escape_changes_view_state_from_detail_to_list() {
+-        let mut app = App {
+-            view_state: ViewState::Detail(create_test_namespace_detail()),
+-            ..create_test_app()
+-        };
+-        app.on_escape();
+-
+-        assert!(matches!(app.view_state, ViewState::List));
+-    }
+-
+-    #[test]
+-    fn test_on_escape_does_not_change_view_when_on_list_view() {
+-        let mut app = App {
+-            view_state: ViewState::List,
+-            ..create_test_app()
+-        };
+-        app.on_escape();
+-
+-        assert!(matches!(app.view_state, ViewState::List));
+-    }
+-
+-    #[test]
+-    fn test_next_moves_down_in_list() {
+-        let mut app = create_test_app();
+-
+-        app.next();
+-        assert_eq!(app.table_state.selected(), Some(1));
+-    }
+-
+-    #[test]
+-    fn test_next_wraps_from_end_to_beginning() {
+-        let mut app = App {
+-            table_state: {
+-                let mut ts = TableState::default();
+-                ts.select(Some(2));
+-                ts
+-            },
+-            ..create_test_app()
+-        };
+-
+-        app.next();
+-
+-        assert_eq!(app.table_state.selected(), Some(0));
+-    }
+-
+-    #[test]
+-    fn test_next_does_nothing_with_empty_namespaces() {
+-        let mut app = App {
+-            namespaces: vec![],
+-            ..create_test_app()
+-        };
+-        app.next();
+-
+-        assert_eq!(app.table_state.selected(), Some(0));
+-    }
+-
+-    #[test]
+-    fn test_next_does_nothing_when_not_in_view() {
+-        let mut app = App {
+-            view_state: ViewState::Detail(NamespaceDetail {
+-                interfaces: vec![],
+-                routes: vec![],
+-                processes: vec![],
+-                firewall: FirewallInfo {
+-                    chains: 10,
+-                    rules: 10,
+-                },
+-                ports: vec![],
+-            }),
+-            ..create_test_app()
+-        };
+-        app.next();
+-
+-        assert_eq!(app.table_state.selected(), Some(0));
+-    }
+-
+-    #[test]
+-    fn test_previous_moves_up_in_list() {
+-        let mut app = App {
+-            table_state: {
+-                let mut ts = TableState::default();
+-                ts.select(Some(2));
+-                ts
+-            },
+-            ..create_test_app()
+-        };
+-
+-        app.previous();
+-        assert_eq!(app.table_state.selected(), Some(1));
+-    }
+-
+-    #[test]
+-    fn test_previous_wraps_to_beginning_to_end() {
+-        let mut app = create_test_app();
+-
+-        app.previous();
+-
+-        assert_eq!(app.table_state.selected(), Some(2));
+-    }
+-
+-    #[test]
+-    fn test_previous_does_nothing_with_empty_namespaces() {
+-        let mut app = App {
+-            namespaces: vec![],
+-            ..create_test_app()
+-        };
+-        app.previous();
+-
+-        assert_eq!(app.table_state.selected(), Some(0));
+-    }
+-
+-    #[test]
+-    fn test_previous_does_nothing_when_not_in_view() {
+-        let mut app = App {
+-            view_state: ViewState::Detail(create_test_namespace_detail()),
+-            ..create_test_app()
+-        };
+-        app.previous();
+-
+-        assert_eq!(app.table_state.selected(), Some(0));
+-    }
+ }
+diff --git a/src/main.rs b/src/main.rs
+index 31abd38..867fc25 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -3,12 +3,33 @@ mod models;
+ mod scanner;
+ mod ui;
+ 
+-use std::io;
++use std::{fs::File, io, sync::Arc};
++use tracing::info;
++use tracing_subscriber::{EnvFilter, fmt, prelude::*};
+ 
+ use crate::app::App;
+ 
+ fn main() -> io::Result<()> {
+-    let mut app = App::new()?;
++    let log_file = File::create("ns-visualizer.log")?;
++
++    let file_writer = Arc::new(log_file);
++
++    tracing_subscriber::registry()
++        .with(EnvFilter::from_default_env().add_directive(tracing::Level::DEBUG.into()))
++        .with(
++            fmt::layer()
++                .with_writer(file_writer)
++                .with_ansi(false)
++                .with_thread_ids(true)
++                .with_target(false),
++        )
++        .init();
++
++    info!("Namespace manager started logging to file.");
++
++    let mut app = App::new()
++        .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Startup Error: {:?}", e)))?;
++
+     let mut terminal = ratatui::init();
+ 
+     let app_result = app.run(&mut terminal);
+diff --git a/src/models.rs b/src/models.rs
+index 799f1e4..04d79bb 100644
+--- a/src/models.rs
++++ b/src/models.rs
+@@ -19,18 +19,6 @@ pub struct NetworkNamespace {
+     pub ip_prefixes: Vec<String>,
+ }
+ 
+-impl NetworkNamespace {
+-    pub fn add_process(&mut self, name: String) {
+-        if self.process_names.len() < 4 {
+-            self.process_names.push(name);
+-        }
+-    }
+-    pub fn finalize(&mut self) {
+-        self.process_names.sort();
+-        self.process_names.dedup();
+-    }
+-}
+-
+ #[derive(Debug, Default)]
+ pub struct NamespaceDetail {
+     pub interfaces: Vec<InterfaceInfo>,
+@@ -38,6 +26,7 @@ pub struct NamespaceDetail {
+     pub processes: Vec<ProcessInfo>,
+     pub firewall: FirewallInfo,
+     pub ports: Vec<ListeningPort>,
++    pub peers: Vec<PeerInfo>,
+ }
+ 
+ #[derive(Debug, Default)]
+@@ -78,6 +67,13 @@ pub struct ListeningPort {
+     pub port: String,
+ }
+ 
++#[derive(Debug, Default)]
++pub struct PeerInfo {
++    pub name: String,
++    pub _ip: String, // Not used yet, we only render the name in the subnet peer widget
++    pub _inode: u64, // Not used yet, we only render the name in the subnet peer widget
++}
++
+ #[derive(Debug)]
+ pub enum DetailTab {
+     Network,
+diff --git a/src/scanner.rs b/src/scanner.rs
+index c9f9773..0dba7df 100644
+--- a/src/scanner.rs
++++ b/src/scanner.rs
+@@ -1,450 +1,533 @@
+-use serde::Deserialize;
+-use std::{
+-    collections::HashMap,
+-    fs, io,
+-    os::unix::fs::MetadataExt,
+-    path::Path,
+-    process::{Command, Stdio},
+-};
++//! # Scanner Module
++//!
++//! This module provides the core engine for discovering and inspecting Linux network namespaces.
++//! It uses a "Service Pattern" to manage binary verification and secure system inspection.
++
++mod error;
++mod structs;
++mod utilities;
++
++pub use error::{NsError, NsResult};
+ 
+ use crate::models::{
+     FirewallInfo, InterfaceInfo, ListeningPort, NamespaceDetail, NamespaceType, NetworkNamespace,
+-    ProcessInfo, RouteInfo,
++    PeerInfo, ProcessInfo, RouteInfo,
++};
++use crate::scanner::structs::{IpAddrJson, IpRouteJson};
++use crate::scanner::utilities::collect_host;
++use std::collections::HashSet;
++use std::{
++    collections::HashMap,
++    fs,
++    os::unix::fs::{MetadataExt, PermissionsExt},
++    path::{Path, PathBuf},
++    process::{Command, Output, Stdio},
++    sync::{Arc, OnceLock},
++    thread,
++    time::{Duration, Instant},
++};
++use tracing::{debug, error, info, warn};
++use utilities::{
++    collect_named, detect_type, get_container_id_from_pid, get_network_id, redact_env_var,
+ };
+ 
+-#[derive(Deserialize, Debug)]
+-struct IpAddrJson {
+-    ifname: String,
+-    operstate: String,
+-    mtu: u64,
+-    addr_info: Vec<IpAddrInfoJson>,
+-    stats64: Option<IpStatsJson>,
+-}
+-#[derive(Deserialize, Debug)]
+-struct IpAddrInfoJson {
+-    local: String,
+-    prefixlen: u32,
+-    family: String,
+-}
+-#[derive(Deserialize, Debug)]
+-struct IpStatsJson {
+-    rx: IpStatsInner,
+-    tx: IpStatsInner,
+-}
+-#[derive(Deserialize, Debug)]
+-struct IpStatsInner {
+-    bytes: u64,
+-}
+-#[derive(Deserialize, Debug)]
+-struct IpRouteJson {
+-    dst: String,
+-    gateway: Option<String>,
+-    dev: Option<String>,
+-}
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
++pub struct Inode(pub u64);
+ 
+-pub fn gather_namespaces() -> io::Result<Vec<NetworkNamespace>> {
+-    let mut ns_map: HashMap<u64, NetworkNamespace> = HashMap::new();
+-    let docker_names = get_docker_names();
++#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
++pub struct Pid(pub u32);
+ 
+-    collect_host(&mut ns_map)?;
+-    collect_named(&mut ns_map)?;
+-    collect_docker(&mut ns_map)?;
+-    scan_processes(&mut ns_map, &docker_names)?;
++const WORLD_WRITABLE: u32 = 0o002;
++const DOCKER_ID_LEN: usize = 12;
++const DEFAULT_CMD_TIMEOUT: Duration = Duration::from_secs(2);
++const MAX_PROC_SCAN_DEPTH: usize = 5000;
++const POLL_INTERVAL: Duration = Duration::from_millis(5);
++const TRUSTED_PATHS: &[&str] = &["/usr/bin", "/usr/sbin", "/bin", "/sbin", "/usr/local/bin"];
+ 
+-    let mut result: Vec<NetworkNamespace> = ns_map.into_values().collect();
+-    for ns in &mut result {
+-        ns.finalize();
+-    }
+-    result.sort_by(|a, b| a.name.cmp(&b.name));
+-    Ok(result)
++trait CommandExt {
++    fn output_checked(&mut self, timeout: Duration) -> NsResult<Output>;
+ }
+ 
+-pub fn fetch_details(ns_path: &str, target_inode: u64) -> NamespaceDetail {
+-    let mut details = NamespaceDetail::default();
++impl CommandExt for Command {
++    fn output_checked(&mut self, timeout: Duration) -> NsResult<Output> {
++        let mut child = self.stdout(Stdio::piped()).stderr(Stdio::piped()).spawn()?;
+ 
+-    if let Ok(output) = Command::new("nsenter")
+-        .arg(format!("--net={}", ns_path))
+-        .arg("--")
+-        .args(&["ip", "-j", "-s", "addr", "show"])
+-        .stderr(Stdio::null())
+-        .output()
+-    {
+-        if let Ok(json) = serde_json::from_slice::<Vec<IpAddrJson>>(&output.stdout) {
+-            for iface in json {
+-                let mut ip_str = String::new();
+-                for addr in iface.addr_info {
+-                    if addr.family == "inet" {
+-                        ip_str = format!("{}/{}", addr.local, addr.prefixlen);
+-                        break;
++        let start = Instant::now();
++        loop {
++            match child.try_wait() {
++                Ok(Some(_status)) => {
++                    return Ok(child.wait_with_output()?);
++                }
++                Ok(None) => {
++                    if start.elapsed() > timeout {
++                        let _ = child.kill();
++                        let _ = child.wait();
++                        return Err(NsError::Timeout("Command execution exceeded limit".into()));
+                     }
++                    thread::sleep(POLL_INTERVAL);
+                 }
+-                let (rx, tx) = if let Some(stats) = iface.stats64 {
+-                    (stats.rx.bytes, stats.tx.bytes)
+-                } else {
+-                    (0, 0)
+-                };
+-                details.interfaces.push(InterfaceInfo {
+-                    name: iface.ifname,
+-                    state: iface.operstate.to_uppercase(),
+-                    mtu: iface.mtu,
+-                    ip: if ip_str.is_empty() {
+-                        "N/A".to_string()
+-                    } else {
+-                        ip_str
+-                    },
+-                    rx_bytes: rx,
+-                    tx_bytes: tx,
+-                });
++                Err(e) => return Err(e.into()),
+             }
+         }
+     }
++}
+ 
+-    if let Ok(output) = Command::new("nsenter")
+-        .arg(format!("--net={}", ns_path))
+-        .arg("--")
+-        .args(&["ip", "-j", "route", "show"])
+-        .stderr(Stdio::null())
+-        .output()
+-    {
+-        if let Ok(json) = serde_json::from_slice::<Vec<IpRouteJson>>(&output.stdout) {
+-            for route in json {
+-                details.routes.push(RouteInfo {
+-                    dst: route.dst,
+-                    gateway: route.gateway.unwrap_or_else(|| "0.0.0.0".to_string()),
+-                    dev: route.dev.unwrap_or_default(),
+-                });
++pub struct BinaryRegistry {
++    pub nsenter: PathBuf,
++    pub ip: PathBuf,
++    pub ss: PathBuf,
++    pub nft: PathBuf,
++    pub docker: Option<PathBuf>,
++}
++
++static REGISTRY: OnceLock<Arc<BinaryRegistry>> = OnceLock::new();
++
++impl BinaryRegistry {
++    pub fn get() -> NsResult<Arc<BinaryRegistry>> {
++        if let Some(registry) = REGISTRY.get() {
++            return Ok(Arc::clone(registry));
++        }
++
++        info!("Initializing Binary Registry...");
++        let new_registry = Arc::new(BinaryRegistry {
++            nsenter: find_and_harden_bin("nsenter")?,
++            ip: find_and_harden_bin("ip")?,
++            ss: find_and_harden_bin("ss")?,
++            nft: find_and_harden_bin("nft")?,
++            docker: find_and_harden_bin("docker").ok(),
++        });
++
++        let _ = REGISTRY.set(Arc::clone(&new_registry));
++
++        Ok(new_registry)
++    }
++}
++
++fn find_and_harden_bin(name: &str) -> NsResult<PathBuf> {
++    for dir in TRUSTED_PATHS {
++        let path = PathBuf::from(dir).join(name);
++        if path.exists() {
++            let real_path = fs::canonicalize(&path)?;
++            let meta = fs::metadata(&real_path)?;
++
++            if meta.uid() != 0 || (meta.permissions().mode() & WORLD_WRITABLE) != 0 {
++                return Err(NsError::InsecureBinary(format!(
++                    "Security check failed for {}",
++                    name
++                )));
+             }
++            debug!("Binary verified: {:?}", real_path);
++            return Ok(real_path);
+         }
+     }
++    Err(NsError::MissingBinary(name.to_string()))
++}
+ 
+-    if let Ok(output) = Command::new("nsenter")
+-        .arg(format!("--net={}", ns_path))
+-        .arg("--")
+-        .args(&["ss", "-lntuH"])
+-        .stderr(Stdio::null())
+-        .output()
+-    {
+-        let out_str = String::from_utf8_lossy(&output.stdout);
+-        for line in out_str.lines() {
+-            let cols: Vec<&str> = line.split_whitespace().collect();
+-            if cols.len() >= 5 {
+-                let proto = cols[0].to_string();
+-                let local = cols[4];
+-                if let Some(idx) = local.rfind(':') {
+-                    details.ports.push(ListeningPort {
+-                        proto,
+-                        addr: local[..idx].to_string(),
+-                        port: local[idx + 1..].to_string(),
+-                    });
++fn check_is_root() -> bool {
++    if let Ok(status) = fs::read_to_string("/proc/self/status") {
++        for line in status.lines() {
++            if line.starts_with("Uid:") {
++                let parts: Vec<&str> = line.split_whitespace().collect();
++                if parts.len() > 1 {
++                    return parts[1] == "0" || parts[2] == "0";
+                 }
+             }
+         }
+     }
++    false
++}
+ 
+-    if let Ok(output) = Command::new("nsenter")
+-        .arg(format!("--net={}", ns_path))
+-        .arg("--")
+-        .args(&["nft", "list", "ruleset"])
+-        .stderr(Stdio::null())
+-        .output()
++fn validate_ns_path(path: &str) -> NsResult<()> {
++    let p = Path::new(path);
++    if !path
++        .chars()
++        .all(|c| c.is_alphanumeric() || "/._-".contains(c))
+     {
+-        let s = String::from_utf8_lossy(&output.stdout);
+-        let mut chains = 0;
+-        let mut rules = 0;
+-        for line in s.lines() {
+-            let l = line.trim();
+-            if l.starts_with("chain ") {
+-                chains += 1;
+-            }
+-            if l.contains(" counter ") || l.contains(" accept") || l.contains(" drop") {
+-                rules += 1;
+-            }
++        return Err(NsError::InvalidPath(
++            "Path contains illegal characters".into(),
++        ));
++    }
++    let l_meta = fs::symlink_metadata(p)
++        .map_err(|_| NsError::InvalidPath(format!("Path {} not accessible", path)))?;
++
++    if l_meta.file_type().is_symlink() && !path.starts_with("/proc/") {
++        return Err(NsError::InsecureBinary(
++            "Untrusted symbolic link detected".into(),
++        ));
++    }
++    Ok(())
++}
++
++// --- The Service Layer ---
++
++pub struct NamespaceService {
++    bins: Arc<BinaryRegistry>,
++}
++
++impl NamespaceService {
++    pub fn new() -> NsResult<Self> {
++        if !check_is_root() {
++            return Err(NsError::InsufficientPrivileges("Root required".into()));
+         }
+-        details.firewall = FirewallInfo { chains, rules };
++        Ok(Self {
++            bins: BinaryRegistry::get()?,
++        })
+     }
+ 
+-    if let Ok(entries) = fs::read_dir("/proc") {
+-        for entry in entries.flatten() {
+-            if let Ok(pid) = entry
+-                .file_name()
+-                .into_string()
+-                .unwrap_or_default()
+-                .parse::<u32>()
+-            {
+-                if let Ok(meta) = fs::metadata(format!("/proc/{}/ns/net", pid)) {
+-                    if meta.ino() == target_inode {
+-                        let comm = fs::read_to_string(format!("/proc/{}/comm", pid))
+-                            .unwrap_or_default()
+-                            .trim()
+-                            .to_string();
++    pub fn gather_all_namespaces(&self) -> NsResult<Vec<NetworkNamespace>> {
++        debug!("Scanning system for namespaces...");
++        let mut ns_map: HashMap<Inode, NetworkNamespace> = HashMap::new();
++        let docker_names = self.get_docker_names();
+ 
+-                        let raw_cmdline =
+-                            fs::read(format!("/proc/{}/cmdline", pid)).unwrap_or_default();
++        collect_host(&mut ns_map)?;
++        collect_named(&mut ns_map)?;
++        self.scan_processes(&mut ns_map, &docker_names)?;
+ 
+-                        let cmdline = String::from_utf8(raw_cmdline)
+-                            .unwrap_or_default()
+-                            .replace('\0', " ")
+-                            .trim()
+-                            .to_string();
++        for ns in ns_map.values_mut() {
++            ns.num_interfaces = self.count_ifaces(&ns.ns_path);
++            ns.ip_prefixes = self.get_namespace_ips(&ns.ns_path);
++        }
+ 
+-                        let raw_env =
+-                            fs::read(format!("/proc/{}/environ", pid)).unwrap_or_default();
+-                        let env_string = String::from_utf8(raw_env).unwrap_or_default();
++        let mut result: Vec<NetworkNamespace> = ns_map.into_values().collect();
++        result.sort_by(|a, b| a.name.cmp(&b.name));
++        Ok(result)
++    }
+ 
+-                        let env_vars: Vec<String> = env_string
+-                            .split('\0')
+-                            .filter(|s| !s.is_empty())
+-                            .map(|s| s.to_string())
+-                            .collect();
++    pub fn resolve_peers(
++        &self,
++        current_ips: &[String],
++        all_ns: &[NetworkNamespace],
++        target_inode: Inode,
++    ) -> Vec<PeerInfo> {
++        let mut peers = Vec::new();
++        let mut seen_inodes = HashSet::new();
++
++        let my_networks: Vec<String> = current_ips
++            .iter()
++            .filter_map(|cidr| get_network_id(cidr))
++            .collect();
++
++        if my_networks.is_empty() {
++            return peers;
++        }
+ 
+-                        if !comm.is_empty() {
+-                            details.processes.push(ProcessInfo {
+-                                pid,
+-                                name: comm,
+-                                cmdline: cmdline,
+-                                env_vars,
+-                            });
+-                        }
++        for other_ns in all_ns {
++            // Skip self
++            if other_ns.inode == target_inode.0 {
++                continue;
++            }
++
++            if seen_inodes.contains(&other_ns.inode) {
++                continue;
++            }
++
++            for other_cidr in &other_ns.ip_prefixes {
++                if let Some(other_net) = get_network_id(other_cidr) {
++                    if my_networks.contains(&other_net) {
++                        peers.push(PeerInfo {
++                            name: other_ns.name.clone(),
++                            _ip: other_cidr.clone(),
++                            _inode: other_ns.inode,
++                        });
++                        seen_inodes.insert(other_ns.inode);
++                        break;
+                     }
+                 }
+             }
+         }
++        peers
+     }
+-    details.processes.sort_by_key(|p| p.pid);
+ 
+-    details
+-}
++    fn get_namespace_ips(&self, ns_path: &str) -> Vec<String> {
++        let mut ips = Vec::new();
+ 
+-fn collect_host(map: &mut HashMap<u64, NetworkNamespace>) -> io::Result<()> {
+-    if let Ok(meta) = fs::metadata("/proc/1/ns/net") {
+-        let inode = meta.ino();
+-        map.insert(
+-            inode,
+-            NetworkNamespace {
+-                name: "Default (Host)".to_string(),
+-                ns_type: NamespaceType::Regular,
+-                inode,
+-                ns_path: "/proc/1/ns/net".to_string(),
+-                num_interfaces: count_ifaces("/proc/1/ns/net"),
+-                process_names: Vec::new(),
+-                primary_pid: Some(1),
+-
+-                ip_prefixes: get_namespace_ips("/proc/1/ns/net"),
+-            },
+-        );
+-    }
+-    Ok(())
+-}
++        if let Ok(output) = Command::new(&self.bins.nsenter)
++            .arg(format!("--net={}", ns_path))
++            .arg("--")
++            .arg(&self.bins.ip)
++            .args(&["-j", "addr", "show"])
++            .output_checked(DEFAULT_CMD_TIMEOUT)
++        {
++            if let Ok(json) = serde_json::from_slice::<Vec<IpAddrJson>>(&output.stdout) {
++                for iface in json {
++                    if iface.ifname == "lo" {
++                        continue;
++                    }
+ 
+-fn collect_named(map: &mut HashMap<u64, NetworkNamespace>) -> io::Result<()> {
+-    let path = Path::new("/var/run/netns");
+-    if !path.exists() {
+-        return Ok(());
+-    }
+-    if let Ok(entries) = fs::read_dir(path) {
+-        for entry in entries.flatten() {
+-            let name = entry.file_name().into_string().unwrap_or_default();
+-            let ns_path = format!("/var/run/netns/{}", name);
+-            if let Ok(meta) = fs::metadata(&ns_path) {
+-                map.entry(meta.ino()).or_insert_with(|| NetworkNamespace {
+-                    name: name.clone(),
+-                    ns_type: detect_type(&name),
+-                    inode: meta.ino(),
+-                    ns_path: ns_path.clone(),
+-                    num_interfaces: count_ifaces(&ns_path),
+-                    process_names: Vec::new(),
+-                    primary_pid: None,
+-
+-                    ip_prefixes: get_namespace_ips(&ns_path),
+-                });
++                    // Note: Currently only supports IPv4 peer detection
++                    for addr in iface.addr_info {
++                        ips.push(format!("{}/{}", addr.local, addr.prefixlen));
++                    }
++                }
+             }
+         }
++        ips
+     }
+-    Ok(())
+-}
+ 
+-fn collect_docker(map: &mut HashMap<u64, NetworkNamespace>) -> io::Result<()> {
+-    let path = Path::new("/var/run/docker/netns");
+-    if !path.exists() {
+-        return Ok(());
+-    }
+-    if let Ok(entries) = fs::read_dir(path) {
+-        for entry in entries.flatten() {
+-            let fname = entry.file_name().into_string().unwrap_or_default();
+-            let ns_path = format!("/var/run/docker/netns/{}", fname);
+-            let display_name = format!("docker-sb-{}", &fname[..8.min(fname.len())]);
+-            if let Ok(meta) = fs::metadata(&ns_path) {
+-                map.entry(meta.ino()).or_insert_with(|| NetworkNamespace {
+-                    name: display_name,
+-                    ns_type: NamespaceType::Container,
+-                    inode: meta.ino(),
+-                    ns_path: ns_path.clone(),
+-                    num_interfaces: count_ifaces(&ns_path),
+-                    process_names: Vec::new(),
+-                    primary_pid: None,
+-
+-                    ip_prefixes: get_namespace_ips(&ns_path),
+-                });
+-            }
+-        }
++    fn ns_exec(&self, ns_path: &str, bin: &PathBuf, args: &[&str]) -> NsResult<Output> {
++        Command::new(&self.bins.nsenter)
++            .arg(format!("--net={}", ns_path))
++            .arg("--")
++            .arg(bin)
++            .args(args)
++            .output_checked(DEFAULT_CMD_TIMEOUT)
+     }
+-    Ok(())
+-}
+ 
+-fn scan_processes(
+-    map: &mut HashMap<u64, NetworkNamespace>,
+-    docker_names: &HashMap<String, String>,
+-) -> io::Result<()> {
+-    let entries = fs::read_dir("/proc")?;
+-    for entry in entries.flatten() {
+-        if let Ok(pid) = entry
+-            .file_name()
+-            .into_string()
+-            .unwrap_or_default()
+-            .parse::<u32>()
+-        {
+-            let ns_path = format!("/proc/{}/ns/net", pid);
+-            if let Ok(meta) = fs::metadata(&ns_path) {
+-                let inode = meta.ino();
+-                let comm = fs::read_to_string(format!("/proc/{}/comm", pid))
+-                    .unwrap_or_default()
+-                    .trim()
+-                    .to_string();
+-                if comm.is_empty() {
+-                    continue;
++    pub fn fetch_details(
++        &self,
++        ns_path: &str,
++        target_inode: Inode,
++    ) -> NsResult<(NamespaceDetail, Vec<String>)> {
++        validate_ns_path(ns_path)?;
++
++        let mut details = NamespaceDetail::default();
++        let mut warnings = Vec::new();
++
++        // 1. Interfaces
++        match self.ns_exec(ns_path, &self.bins.ip, &["-j", "-s", "addr", "show"]) {
++            Ok(output) => {
++                // --- USAGE OF ParseError ---
++                let json: Vec<IpAddrJson> = serde_json::from_slice(&output.stdout)
++                    .map_err(|e| NsError::ParseError(format!("IP JSON Parse Fail: {e}")))?;
++
++                for iface in json {
++                    let (rx, tx) = iface
++                        .stats64
++                        .map(|s| (s.rx.bytes, s.tx.bytes))
++                        .unwrap_or((0, 0));
++                    details.interfaces.push(InterfaceInfo {
++                        name: iface.ifname,
++                        state: iface.operstate.to_uppercase(),
++                        mtu: iface.mtu,
++                        ip: iface
++                            .addr_info
++                            .first()
++                            .map(|a| format!("{}/{}", a.local, a.prefixlen))
++                            .unwrap_or_else(|| "N/A".into()),
++                        rx_bytes: rx,
++                        tx_bytes: tx,
++                    });
+                 }
++            }
++            Err(e) => warnings.push(format!("Interface scan failed: {}", e)),
++        }
+ 
+-                let ns_entry = map.entry(inode).or_insert_with(|| NetworkNamespace {
+-                    name: format!("{}-{}", comm, pid),
+-                    ns_type: detect_type(&comm),
+-                    inode,
+-                    ns_path: ns_path.clone(),
+-                    num_interfaces: count_ifaces(&ns_path),
+-                    process_names: vec![],
+-                    primary_pid: Some(pid),
+-
+-                    ip_prefixes: get_namespace_ips(&ns_path),
+-                });
+-
+-                ns_entry.add_process(comm);
+-                if ns_entry.primary_pid.is_none() || pid < ns_entry.primary_pid.unwrap() {
+-                    ns_entry.primary_pid = Some(pid);
++        // 2. Routes
++        match self.ns_exec(ns_path, &self.bins.ip, &["-j", "route", "show"]) {
++            Ok(output) => {
++                // --- USAGE OF ParseError ---
++                match serde_json::from_slice::<Vec<IpRouteJson>>(&output.stdout) {
++                    Ok(routes) => {
++                        for r in routes {
++                            details.routes.push(RouteInfo {
++                                dst: r.dst,
++                                gateway: r.gateway.unwrap_or_else(|| "0.0.0.0".into()),
++                                dev: r.dev.unwrap_or_default(),
++                            });
++                        }
++                    }
++                    Err(e) => warnings.push(format!("Route JSON Parse Fail: {}", e)),
+                 }
++            }
++            Err(e) => warnings.push(format!("Route scan failed: {}", e)),
++        }
+ 
+-                if let Some(cid) = get_container_id_from_pid(pid) {
+-                    let real_name = docker_names
+-                        .get(&cid)
+-                        .cloned()
+-                        .unwrap_or(format!("docker-{}", cid));
+-
+-                    if ns_entry.ns_type == NamespaceType::Regular
+-                        || ns_entry.name.contains("docker-sb")
+-                    {
+-                        ns_entry.name = real_name;
+-                        ns_entry.ns_type = NamespaceType::Container;
+-                    } else if !ns_entry.name.contains(&real_name) {
+-                        ns_entry.name.push_str(&format!(", {}", real_name));
++        // 3. Listening Ports
++        match self.ns_exec(ns_path, &self.bins.ss, &["-lntuH"]) {
++            Ok(output) => {
++                let out_str = String::from_utf8_lossy(&output.stdout);
++                for line in out_str.lines() {
++                    let cols: Vec<&str> = line.split_whitespace().collect();
++                    if cols.len() >= 5 {
++                        let local = cols[4];
++                        if let Some(idx) = local.rfind(':') {
++                            details.ports.push(ListeningPort {
++                                proto: cols[0].to_string(),
++                                addr: local[..idx].to_string(),
++                                port: local[idx + 1..].to_string(),
++                            });
++                        }
+                     }
+                 }
+             }
++            Err(e) => warnings.push(format!("Port scan failed: {}", e)),
+         }
+-    }
+-    Ok(())
+-}
+ 
+-fn detect_type(name: &str) -> NamespaceType {
+-    let l = name.to_lowercase();
+-    if l.contains("docker") || l.contains("container") {
+-        NamespaceType::Container
+-    } else if l.contains("vpn") || l.contains("tun") || l.contains("wireguard") {
+-        NamespaceType::Vpn
+-    } else {
+-        NamespaceType::Regular
+-    }
+-}
++        // 4. Firewall
++        match self.ns_exec(ns_path, &self.bins.nft, &["list", "ruleset"]) {
++            Ok(output) => {
++                let out_str = String::from_utf8_lossy(&output.stdout);
++                let chains = out_str
++                    .lines()
++                    .filter(|l| l.trim().starts_with("chain "))
++                    .count();
++                let rules = out_str
++                    .lines()
++                    .filter(|l| l.contains("accept") || l.contains("drop"))
++                    .count();
++                details.firewall = FirewallInfo {
++                    chains: chains,
++                    rules: rules,
++                };
++            }
++            Err(e) => warnings.push(format!("Firewall scan failed: {}", e)),
++        }
+ 
+-fn count_ifaces(ns_path: &str) -> usize {
+-    if ns_path.contains("/proc/1/") {
+-        return fs::read_dir("/sys/class/net")
+-            .map(|i| i.count())
+-            .unwrap_or(0);
+-    }
+-    if let Ok(o) = Command::new("nsenter")
+-        .arg(format!("--net={}", ns_path))
+-        .arg("--")
+-        .args(&["ip", "-o", "link"])
+-        .output()
+-    {
+-        String::from_utf8_lossy(&o.stdout).lines().count()
+-    } else {
+-        0
++        // 5. Processes
++        self.scan_details_processes(&mut details, target_inode)?;
++
++        Ok((details, warnings))
+     }
+-}
+ 
+-fn get_docker_names() -> HashMap<String, String> {
+-    let mut map = HashMap::new();
+-    if let Ok(out) = Command::new("docker")
+-        .args(&["ps", "--format", "{{.ID}}|{{.Names}}"])
+-        .output()
+-    {
+-        for line in String::from_utf8_lossy(&out.stdout).lines() {
+-            if let Some((id, name)) = line.split_once('|') {
+-                map.insert(id.to_string(), name.to_string());
++    fn scan_processes(
++        &self,
++        map: &mut HashMap<Inode, NetworkNamespace>,
++        docker_names: &HashMap<String, String>,
++    ) -> NsResult<()> {
++        let entries = fs::read_dir("/proc")?;
++        for entry in entries.flatten().take(MAX_PROC_SCAN_DEPTH) {
++            let pid_s = entry.file_name().to_string_lossy().into_owned();
++            if let Ok(pid_val) = pid_s.parse::<u32>() {
++                let ns_l = format!("/proc/{}/ns/net", pid_val);
++                if let Ok(meta) = fs::metadata(&ns_l) {
++                    let inode = Inode(meta.ino());
++                    let comm = fs::read_to_string(format!("/proc/{}/comm", pid_val))
++                        .unwrap_or_default()
++                        .trim()
++                        .to_string();
++                    if !comm.is_empty() {
++                        let ns_entry = map.entry(inode).or_insert_with(|| NetworkNamespace {
++                            name: format!("{}-{}", comm, pid_val),
++                            ns_type: detect_type(&comm),
++                            inode: inode.0,
++                            ns_path: ns_l.clone(),
++                            num_interfaces: 0,
++                            process_names: vec![],
++                            primary_pid: Some(pid_val),
++                            ip_prefixes: vec![],
++                        });
++                        ns_entry.process_names.push(comm.clone());
++                        if let Some(cid) = get_container_id_from_pid(Pid(pid_val)) {
++                            if let Some(real_name) = docker_names.get(&cid) {
++                                ns_entry.name = real_name.clone();
++                                ns_entry.ns_type = NamespaceType::Container;
++                            }
++                        }
++                    }
++                }
+             }
+         }
++        Ok(())
+     }
+-    map
+-}
+ 
+-fn get_container_id_from_pid(pid: u32) -> Option<String> {
+-    let content = fs::read_to_string(format!("/proc/{}/cgroup", pid)).ok()?;
+-    for line in content.lines() {
+-        if let Some(idx) = line.rfind("docker-") {
+-            let s = &line[idx + 7..];
+-
+-            if let Some(end) = s.find(".scope") {
+-                return Some(s[..12.min(end)].to_string());
++    /// Scans the entire /proc filesystem to find all processes associated with a specific
++    /// network namespace inode. It populates detailed process info including command lines
++    /// and environment variables.
++    fn scan_details_processes(
++        &self,
++        details: &mut NamespaceDetail,
++        target_inode: Inode,
++    ) -> NsResult<()> {
++        debug!("Performing deep process scan for Inode: {}", target_inode.0);
++
++        let entries = fs::read_dir("/proc").map_err(|e| {
++            error!("Failed to read /proc directory: {}", e);
++            NsError::IoWithPath {
++                source: e,
++                path: PathBuf::from("/proc"),
+             }
++        })?;
++
++        for entry in entries.flatten().take(MAX_PROC_SCAN_DEPTH) {
++            let pid_s = entry.file_name().to_string_lossy().into_owned();
++
++            // Only process directories that are valid PIDs (numeric)
++            if let Ok(pid_val) = pid_s.parse::<u32>() {
++                let proc_root = Path::new("/proc").join(&pid_s);
++                let ns_path = proc_root.join("ns/net");
++
++                // Check if the process's network namespace matches our target inode
++                // Note: We use metadata() which follows the magic symlink in /proc
++                if let Ok(meta) = fs::metadata(&ns_path) {
++                    if meta.ino() == target_inode.0 {
++                        // 1. Get process name (comm)
++                        let name = fs::read_to_string(proc_root.join("comm"))
++                            .unwrap_or_else(|_| "unknown".to_string())
++                            .trim()
++                            .to_string();
+ 
+-            return Some(s[..12.min(s.len())].to_string());
+-        }
++                        // 2. Get full command line
++                        // /proc/[pid]/cmdline uses null-bytes as separators
++                        let cmdline_raw = fs::read(proc_root.join("cmdline")).unwrap_or_default();
++                        let cmdline = String::from_utf8_lossy(&cmdline_raw)
++                            .replace('\0', " ")
++                            .trim()
++                            .to_string();
++
++                        // 3. Get Environment Variables
++                        // /proc/[pid]/environ also uses null-bytes as separators
++                        let env_raw = fs::read(proc_root.join("environ")).unwrap_or_default();
++                        let env_vars: Vec<String> = env_raw
++                            .split(|&b| b == 0)
++                            .filter(|s| !s.is_empty())
++                            .map(|s| redact_env_var(&String::from_utf8_lossy(s)))
++                            .collect();
+ 
+-        if let Some(idx) = line.rfind("/docker/") {
+-            let s = &line[idx + 8..];
+-            return Some(s[..12.min(s.len())].to_string());
++                        debug!(
++                            "Found process in namespace: [{}] {} (Env: {})",
++                            pid_val,
++                            name,
++                            env_vars.len()
++                        );
++
++                        details.processes.push(ProcessInfo {
++                            pid: pid_val,
++                            name,
++                            cmdline,
++                            env_vars,
++                        });
++                    }
++                }
++            }
+         }
+ 
+-        if let Some(idx) = line.rfind("docker/") {
+-            let s = &line[idx + 7..];
+-            return Some(s[..12.min(s.len())].to_string());
++        details.processes.sort_by_key(|p| p.pid);
++
++        if details.processes.is_empty() {
++            warn!(
++                "No processes found for Inode {}. This can happen if the namespace is stale.",
++                target_inode.0
++            );
+         }
+-    }
+-    None
+-}
+ 
+-fn get_namespace_ips(ns_path: &str) -> Vec<String> {
+-    let mut ips = Vec::new();
++        Ok(())
++    }
+ 
+-    if let Ok(output) = Command::new("nsenter")
+-        .arg(format!("--net={}", ns_path))
+-        .arg("--")
+-        .args(&["ip", "-j", "addr", "show"])
+-        .stderr(Stdio::null())
+-        .output()
+-    {
+-        if let Ok(json) = serde_json::from_slice::<Vec<IpAddrJson>>(&output.stdout) {
+-            for iface in json {
+-                if iface.ifname == "lo" {
+-                    continue;
+-                }
++    fn count_ifaces(&self, ns_path: &str) -> usize {
++        Command::new(&self.bins.nsenter)
++            .arg(format!("--net={}", ns_path))
++            .arg("--")
++            .arg(&self.bins.ip)
++            .args(["-o", "link"])
++            .output_checked(DEFAULT_CMD_TIMEOUT)
++            .map(|o| String::from_utf8_lossy(&o.stdout).lines().count())
++            .unwrap_or(0)
++    }
+ 
+-                for addr in iface.addr_info {
+-                    if addr.family == "inet" {
+-                        ips.push(format!("{}/{}", addr.local, addr.prefixlen));
++    fn get_docker_names(&self) -> HashMap<String, String> {
++        let mut map = HashMap::new();
++        if let Some(ref d) = self.bins.docker {
++            if let Ok(out) = Command::new(d)
++                .args(["ps", "--format", "{{.ID}}|{{.Names}}"])
++                .output_checked(DEFAULT_CMD_TIMEOUT)
++            {
++                for line in String::from_utf8_lossy(&out.stdout).lines() {
++                    if let Some((id, name)) = line.split_once('|') {
++                        map.insert(id.into(), name.into());
+                     }
+                 }
+             }
+         }
++        map
+     }
+-    ips
+ }
+diff --git a/src/ui/namespace_details_view.rs b/src/ui/namespace_details_view.rs
+index ef46cb4..3ef6da6 100644
+--- a/src/ui/namespace_details_view.rs
++++ b/src/ui/namespace_details_view.rs
+@@ -75,14 +75,7 @@ pub fn render_detail(
+ 
+     match detail_state.active_tab {
+         DetailTab::Network => {
+-            render_network_tab(
+-                f,
+-                detail_state,
+-                info,
+-                namespaces,
+-                current_ns,
+-                right_chunks[1],
+-            );
++            render_network_tab(f, detail_state, info, right_chunks[1]);
+         }
+         DetailTab::Internals => {
+             render_internals_tab(
+diff --git a/src/ui/namespace_details_view/details_tabs_widget/network_tab.rs b/src/ui/namespace_details_view/details_tabs_widget/network_tab.rs
+index 9f8ced9..9ca95b9 100644
+--- a/src/ui/namespace_details_view/details_tabs_widget/network_tab.rs
++++ b/src/ui/namespace_details_view/details_tabs_widget/network_tab.rs
+@@ -15,14 +15,12 @@ use nftables_widget::make_nftables_widget;
+ use routing_table_widget::make_routing_table_widget;
+ use subnet_peers_widget::make_subnet_peers;
+ 
+-use crate::models::{DetailState, NamespaceDetail, NetworkNamespace};
++use crate::models::{DetailState, NamespaceDetail};
+ 
+ pub fn render_network_tab(
+     f: &mut Frame,
+     state: &mut DetailState,
+     info: &NamespaceDetail,
+-    namespaces: &[NetworkNamespace],
+-    current_ns: &NetworkNamespace,
+     area: Rect,
+ ) {
+     let chunks = Layout::default()
+@@ -63,5 +61,5 @@ pub fn render_network_tab(
+ 
+     f.render_widget(make_nftables_widget(&info.firewall), bottom_row[0]);
+ 
+-    f.render_widget(make_subnet_peers(current_ns, namespaces), bottom_row[1]);
++    f.render_widget(make_subnet_peers(info), bottom_row[1]);
+ }
+diff --git a/src/ui/namespace_details_view/details_tabs_widget/network_tab/subnet_peers_widget.rs b/src/ui/namespace_details_view/details_tabs_widget/network_tab/subnet_peers_widget.rs
+index 486038f..8c22b96 100644
+--- a/src/ui/namespace_details_view/details_tabs_widget/network_tab/subnet_peers_widget.rs
++++ b/src/ui/namespace_details_view/details_tabs_widget/network_tab/subnet_peers_widget.rs
+@@ -1,45 +1,23 @@
+ use ratatui::widgets::{Block, Borders, Paragraph, Wrap};
+ 
+-use crate::models::NetworkNamespace;
+-
+-pub fn make_subnet_peers<'a>(
+-    selected_network_namespace: &'a NetworkNamespace,
+-    all_network_namespaces: &'a [NetworkNamespace],
+-) -> Paragraph<'a> {
+-    let namespace_ip_prefixes = &selected_network_namespace.ip_prefixes;
+-    let namespace_inode = selected_network_namespace.inode;
+-    let my_networks: Vec<String> = namespace_ip_prefixes
+-        .iter()
+-        .filter_map(|cidr| get_network_id(cidr))
+-        .collect();
+-
+-    let mut peer_names = Vec::new();
+-    if !my_networks.is_empty() {
+-        for ns in all_network_namespaces {
+-            if ns.inode == namespace_inode {
+-                continue;
+-            }
+-
+-            for other_cidr in &ns.ip_prefixes {
+-                if let Some(other_net) = get_network_id(other_cidr) {
+-                    if my_networks.contains(&other_net) {
+-                        peer_names.push(ns.name.clone());
+-                        break;
+-                    }
+-                }
+-            }
+-        }
+-    }
++use crate::models::NamespaceDetail;
+ 
+-    let peers_title = format!("Subnet Peers ({})", peer_names.len());
+-    let peers_text = if peer_names.is_empty() {
+-        if my_networks.is_empty() {
++pub fn make_subnet_peers<'a>(info: &NamespaceDetail) -> Paragraph<'a> {
++    let peers = &info.peers;
++
++    let peers_title = format!("Subnet Peers ({})", peers.len());
++    let peers_text = if peers.is_empty() {
++        if info.interfaces.iter().all(|i| i.ip == "N/A") {
+             "No IP address assigned.".to_string()
+         } else {
+             "No peers found in same subnet.".to_string()
+         }
+     } else {
+-        peer_names.join(", ")
++        peers
++            .iter()
++            .map(|p| p.name.clone())
++            .collect::<Vec<_>>()
++            .join(", ")
+     };
+ 
+     Paragraph::new(peers_text)
+@@ -47,59 +25,42 @@ pub fn make_subnet_peers<'a>(
+         .wrap(Wrap { trim: true })
+ }
+ 
+-fn get_network_id(cidr: &str) -> Option<String> {
+-    let parts: Vec<&str> = cidr.split('/').collect();
+-    if parts.len() != 2 {
+-        return None;
+-    }
+-
+-    let ip = parts[0];
+-    let prefix: usize = parts[1].parse().ok()?;
+-
+-    let octets: Vec<&str> = ip.split('.').collect();
+-    if octets.len() != 4 {
+-        return None;
+-    }
+-
+-    let relevant_octets = (prefix as f32 / 8.0).ceil() as usize;
+-    let count = relevant_octets.clamp(1, 4);
+-
+-    Some(octets[0..count].join("."))
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use crate::models::{InterfaceInfo, PeerInfo};
+     use ratatui::{buffer::Buffer, layout::Rect, widgets::Widget};
+ 
+-    use crate::models::NetworkNamespace;
++    fn create_mock_details(peers: Vec<(&str, &str)>, has_ips: bool) -> NamespaceDetail {
++        let mut details = NamespaceDetail::default();
+ 
+-    fn create_ns(inode: u64, name: &str, ip_prefixes: Vec<&str>) -> NetworkNamespace {
+-        NetworkNamespace {
+-            inode,
+-            name: name.to_string(),
+-            ip_prefixes: ip_prefixes.iter().map(|s| s.to_string()).collect(),
++        if has_ips {
++            details.interfaces.push(InterfaceInfo {
++                name: "eth0".into(),
++                ip: "192.168.1.10/24".into(),
++                ..Default::default()
++            });
++        }
+ 
+-            ns_type: crate::models::NamespaceType::Container,
+-            ns_path: String::new(),
+-            primary_pid: None,
+-            num_interfaces: 5,
+-            process_names: vec![],
++        for (name, ip) in peers {
++            details.peers.push(PeerInfo {
++                name: name.to_string(),
++                _ip: ip.to_string(),
++                _inode: 12345,
++            });
+         }
++
++        details
+     }
+ 
+     #[test]
+     fn test_make_subnet_peers_with_matches() {
+-        let selected = create_ns(1, "current_ns", vec!["192.168.1.10/24"]);
+-
+-        let all_namespaces = vec![
+-            create_ns(1, "current_ns", vec!["192.168.1.10/24"]),
+-            create_ns(2, "peer_1", vec!["192.168.1.20/24"]),
+-            create_ns(3, "peer_2", vec!["10.0.0.5/8"]),
+-            create_ns(4, "peer_3", vec!["192.168.1.50/24"]),
+-        ];
++        let info = create_mock_details(
++            vec![("peer_1", "192.168.1.20"), ("peer_3", "192.168.1.50")],
++            true,
++        );
+ 
+-        let widget = make_subnet_peers(&selected, &all_namespaces);
++        let widget = make_subnet_peers(&info);
+ 
+         let mut buf = Buffer::empty(Rect::new(0, 0, 80, 5));
+         Widget::render(widget, *buf.area(), &mut buf);
+@@ -117,14 +78,9 @@ mod tests {
+ 
+     #[test]
+     fn test_make_subnet_peers_no_matches() {
+-        let selected = create_ns(1, "current_ns", vec!["10.0.0.1/8"]);
+-
+-        let all_namespaces = vec![
+-            create_ns(1, "current_ns", vec!["10.0.0.1/8"]),
+-            create_ns(2, "other_ns", vec!["192.168.1.1/24"]),
+-        ];
++        let info = create_mock_details(vec![], true);
+ 
+-        let widget = make_subnet_peers(&selected, &all_namespaces);
++        let widget = make_subnet_peers(&info);
+ 
+         let mut buf = Buffer::empty(Rect::new(0, 0, 80, 5));
+         Widget::render(widget, *buf.area(), &mut buf);
+@@ -142,14 +98,10 @@ mod tests {
+ 
+     #[test]
+     fn test_make_subnet_peers_no_ip_assigned() {
+-        let selected = create_ns(1, "current_ns", vec![]);
++        // No interfaces with IPs, and no peers
++        let info = create_mock_details(vec![], false);
+ 
+-        let all_namespaces = vec![
+-            create_ns(1, "current_ns", vec![]),
+-            create_ns(2, "peer_1", vec!["192.168.1.1/24"]),
+-        ];
+-
+-        let widget = make_subnet_peers(&selected, &all_namespaces);
++        let widget = make_subnet_peers(&info);
+ 
+         let mut buf = Buffer::empty(Rect::new(0, 0, 80, 5));
+         Widget::render(widget, *buf.area(), &mut buf);
+@@ -164,37 +116,4 @@ mod tests {
+ 
+         assert_eq!(buf, expected);
+     }
+-
+-    #[test]
+-    fn test_get_network_id_standard_prefixes() {
+-        assert_eq!(
+-            get_network_id("192.168.1.10/24"),
+-            Some("192.168.1".to_string())
+-        );
+-
+-        assert_eq!(get_network_id("172.16.0.5/16"), Some("172.16".to_string()));
+-        assert_eq!(get_network_id("10.5.2.1/8"), Some("10".to_string()));
+-
+-        assert_eq!(get_network_id("8.8.8.8/32"), Some("8.8.8.8".to_string()));
+-    }
+-
+-    #[test]
+-    fn test_get_network_id_boundary_prefixes() {
+-        assert_eq!(get_network_id("10.200.5.1/9"), Some("10.200".to_string()));
+-        assert_eq!(
+-            get_network_id("192.168.50.5/23"),
+-            Some("192.168.50".to_string())
+-        );
+-
+-        assert_eq!(get_network_id("128.0.0.1/1"), Some("128".to_string()));
+-    }
+-
+-    #[test]
+-    fn test_get_network_id_invalid_inputs() {
+-        assert_eq!(get_network_id("192.168.1.1"), None);
+-        assert_eq!(get_network_id("192.168.1.1/abc"), None);
+-        assert_eq!(get_network_id("192.168/24"), None);
+-        assert_eq!(get_network_id("192.168.1.1.5/24"), None);
+-        assert_eq!(get_network_id(""), None);
+-    }
+ }
+diff --git a/src/ui/namespaces_list_view.rs b/src/ui/namespaces_list_view.rs
+index 1f1cd15..506a15b 100644
+--- a/src/ui/namespaces_list_view.rs
++++ b/src/ui/namespaces_list_view.rs
+@@ -83,28 +83,20 @@ mod tests {
+     use ratatui::{buffer::Buffer, layout::Rect, widgets::Widget};
+ 
+     use super::*;
+-    use crate::{app::ViewState, models::DetailState};
+     #[test]
+     fn namespace_table_display_correctly() {
+-        let app = App {
+-            namespaces: vec![NetworkNamespace {
+-                name: "test-ns".to_string(),
+-                ns_type: NamespaceType::Container,
+-                process_names: vec!["nginx".to_string()],
+-                num_interfaces: 2,
+-                inode: 6454,
+-                ns_path: "path/one".to_string(),
+-                primary_pid: Some(123),
+-                ip_prefixes: vec!["ip_1".to_string(), "ip_2".to_string()],
+-            }],
+-            table_state: Default::default(),
+-            view_state: ViewState::List,
+-            exit: false,
+-            detail_state: DetailState::default(),
+-            is_loading: false,
+-        };
++        let namespaces = vec![NetworkNamespace {
++            name: "test-ns".to_string(),
++            ns_type: NamespaceType::Container,
++            process_names: vec!["nginx".to_string()],
++            num_interfaces: 2,
++            inode: 6454,
++            ns_path: "path/one".to_string(),
++            primary_pid: Some(123),
++            ip_prefixes: vec!["ip_1".to_string(), "ip_2".to_string()],
++        }];
+ 
+-        let table = build_namespace_table(&app.namespaces);
++        let table = build_namespace_table(&namespaces);
+ 
+         let mut buf = Buffer::empty(Rect::new(0, 0, 50, 5));
+         Widget::render(table, *buf.area(), &mut buf);

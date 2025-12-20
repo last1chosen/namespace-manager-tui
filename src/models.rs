@@ -19,18 +19,6 @@ pub struct NetworkNamespace {
     pub ip_prefixes: Vec<String>,
 }
 
-impl NetworkNamespace {
-    pub fn add_process(&mut self, name: String) {
-        if self.process_names.len() < 4 {
-            self.process_names.push(name);
-        }
-    }
-    pub fn finalize(&mut self) {
-        self.process_names.sort();
-        self.process_names.dedup();
-    }
-}
-
 #[derive(Debug, Default)]
 pub struct NamespaceDetail {
     pub interfaces: Vec<InterfaceInfo>,
@@ -38,6 +26,7 @@ pub struct NamespaceDetail {
     pub processes: Vec<ProcessInfo>,
     pub firewall: FirewallInfo,
     pub ports: Vec<ListeningPort>,
+    pub peers: Vec<PeerInfo>,
 }
 
 #[derive(Debug, Default)]
@@ -76,6 +65,13 @@ pub struct ListeningPort {
     pub proto: String,
     pub addr: String,
     pub port: String,
+}
+
+#[derive(Debug, Default)]
+pub struct PeerInfo {
+    pub name: String,
+    pub _ip: String, // Not used yet, we only render the name in the subnet peer widget
+    pub _inode: u64, // Not used yet, we only render the name in the subnet peer widget
 }
 
 #[derive(Debug)]
