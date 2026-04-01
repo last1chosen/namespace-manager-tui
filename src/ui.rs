@@ -13,9 +13,12 @@ use ratatui::{
     widgets::{Block, BorderType, Borders, Clear, Paragraph},
 };
 
-use crate::app::{App, ViewState};
+use crate::{
+    app::{App, ViewState},
+    scanner::host::Host,
+};
 
-pub fn render_ui(f: &mut Frame, app: &mut App) {
+pub fn render_ui<H: Host + 'static>(f: &mut Frame, app: &mut App<H>) {
     match &app.view_state {
         ViewState::List => render_list(f, app),
         ViewState::Detail(info) => {

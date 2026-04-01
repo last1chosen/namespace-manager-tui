@@ -7,11 +7,12 @@ use std::{fs::File, io, sync::Arc};
 use tracing::info;
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
 
-use crate::app::App;
-
+use crate::{
+    app::App,
+    scanner::{NamespaceService, NsError},
+};
 fn main() -> io::Result<()> {
     let log_file = File::create("ns-visualizer.log")?;
-
     let file_writer = Arc::new(log_file);
 
     tracing_subscriber::registry()
@@ -27,14 +28,44 @@ fn main() -> io::Result<()> {
 
     info!("Namespace manager started logging to file.");
 
-    let mut app = App::new()
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Startup Error: {:?}", e)))?;
+    let service = NamespaceService::new().map_err(|e| {
+        tracing::error!("Internal Startup Failure: {:?}", e);
+
+        match e {
+            NsError::InsufficientPrivileges(_) => io::Error::new(
+                io::ErrorKind::PermissionDenied,
+                "Access Denied: High-privilege (root) capabilities required.",
+            ),
+            NsError::IoWithPath { .. } => io::Error::new(
+                io::ErrorKind::NotFound,
+                "System Error: A required kernel interface or path is unreachable.",
+            ),
+            _ => io::Error::new(
+                io::ErrorKind::Other,
+                "Initialization Failed: Check log file for incident details.",
+            ),
+        }
+    })?;
+
+    let service_arc = Arc::new(service);
+
+    // 2. APP INITIALIZATION
+    let mut app = App::with_service(service_arc).map_err(|e| {
+        tracing::error!("App Init Panic: {:?}", e);
+        io::Error::new(
+            io::ErrorKind::Other,
+            "Application Error: Failed to initialize UI state.",
+        )
+    })?;
 
     let mut terminal = ratatui::init();
-
     let app_result = app.run(&mut terminal);
-
     ratatui::restore();
+
+    // 3. EXIT HANDLING
+    if let Err(ref e) = app_result {
+        tracing::error!("Runtime Crash: {:?}", e);
+    }
 
     app_result
 }

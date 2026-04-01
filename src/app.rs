@@ -14,10 +14,14 @@ use std::{
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::DefaultTerminal;
 use ratatui::widgets::TableState;
+use tracing::debug;
 
-use crate::models::{DetailSection, DetailState, DetailTab, NamespaceDetail, NetworkNamespace};
 use crate::scanner::{Inode, NamespaceService, NsResult};
 use crate::ui::render_ui;
+use crate::{
+    models::{DetailSection, DetailState, DetailTab, NamespaceDetail, NetworkNamespace},
+    scanner::host::Host,
+};
 
 #[derive(Debug)]
 pub enum ViewState {
@@ -25,22 +29,26 @@ pub enum ViewState {
     Detail(NamespaceDetail),
 }
 
-pub struct App {
-    pub service: Arc<NamespaceService>,
+/// App is now generic over <H: Host>.
+/// This allows us to inject a 'MockHost' during unit tests to verify
+/// TUI behavior without needing root or /proc access.
+pub struct App<H: Host + 'static> {
+    pub service: Arc<NamespaceService<H>>,
     pub namespaces: Arc<Vec<NetworkNamespace>>,
     pub table_state: TableState,
     pub view_state: ViewState,
     pub exit: bool,
     pub detail_state: DetailState,
     pub is_loading: bool,
+    /// Stores non-fatal warnings (e.g., "NFTables scan failed") to display in UI
     pub warnings: Vec<String>,
+    // Channels using NsResult to propagate errors across thread boundaries
     pub ns_rx: Option<Receiver<NsResult<Vec<NetworkNamespace>>>>,
     pub detail_rx: Option<Receiver<NsResult<(NamespaceDetail, Vec<String>)>>>,
 }
 
-impl App {
-    pub fn new() -> NsResult<App> {
-        let service = Arc::new(NamespaceService::new()?);
+impl<H: Host + 'static> App<H> {
+    pub fn with_service(service: Arc<NamespaceService<H>>) -> NsResult<Self> {
         let namespaces = Arc::new(service.gather_all_namespaces()?);
 
         let mut table_state = TableState::default();
@@ -62,15 +70,23 @@ impl App {
         })
     }
 
+    /// The main application loop.
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
         while !self.exit {
+            // 1. Reconcile asynchronous background results
             self.check_background_tasks();
+
+            // 2. Redraw UI (handles rendering loading spinners or warnings)
             terminal.draw(|f| render_ui(f, self))?;
+
+            // 3. Process blocking input events
             self.handle_events()?;
         }
         Ok(())
     }
 
+    /// Checks the MPSC receivers for any completed background work.
+    /// This allows the UI to update as soon as the background scan finishes.
     fn check_background_tasks(&mut self) {
         if let Some(ref rx) = self.ns_rx {
             if let Ok(result) = rx.try_recv() {
@@ -78,7 +94,6 @@ impl App {
                     Ok(new_ns) => {
                         let selected = self.table_state.selected();
                         self.namespaces = Arc::new(new_ns);
-                        // Attempt to maintain selection index
                         if let Some(idx) = selected {
                             if idx < self.namespaces.len() {
                                 self.table_state.select(Some(idx));
@@ -99,7 +114,6 @@ impl App {
                 match result {
                     Ok((details, warnings)) => {
                         self.view_state = ViewState::Detail(details);
-                        // Surface non-fatal errors collected during scan
                         self.detail_state.env_vars.select(None);
                         self.warnings = warnings;
                     }
@@ -158,23 +172,30 @@ impl App {
         }
         Ok(())
     }
+
     pub fn refresh(&mut self) {
+        // 1. ATOMIC LOCK: If a scan is already in flight, skip and log.
         if self.is_loading {
+            debug!("Refresh skipped: discovery already in progress.");
             return;
         }
 
+        // 2. SET STATE: Prepare for the async operation
         self.is_loading = true;
         self.warnings.clear();
 
+        // Setup Namespace Discovery Channel
         let (ns_tx, ns_rx) = mpsc::channel();
         self.ns_rx = Some(ns_rx);
 
+        // Strategy 1: The Global List Scan
         let service_list = Arc::clone(&self.service);
         thread::spawn(move || {
             let result = service_list.gather_all_namespaces();
             let _ = ns_tx.send(result);
         });
 
+        // Strategy 2: The Deep-Dive Detail Scan (Only if in Detail View)
         if let ViewState::Detail(_) = self.view_state {
             if let Some(idx) = self.table_state.selected() {
                 if let Some(ns) = self.namespaces.get(idx) {
@@ -186,25 +207,23 @@ impl App {
                     let inode = Inode(ns.inode);
                     let all_ns_snapshot = Arc::clone(&self.namespaces);
 
-                    thread::spawn(move || {
-                        match service.fetch_details(&path, inode) {
-                            Ok((mut details, warnings)) => {
-                                // Step 2: Extract IPs found during fetch to resolve peers
-                                let current_ips: Vec<String> = details
-                                    .interfaces
-                                    .iter()
-                                    .filter(|i| i.ip != "N/A")
-                                    .map(|i| i.ip.clone())
-                                    .collect();
+                    thread::spawn(move || match service.fetch_details(&path, inode) {
+                        Ok((mut details, warnings)) => {
+                            let current_ips: Vec<String> = details
+                                .interfaces
+                                .iter()
+                                .filter(|i| i.ip != "N/A")
+                                .map(|i| i.ip.clone())
+                                .collect();
 
-                                details.peers =
-                                    service.resolve_peers(&current_ips, &all_ns_snapshot, inode);
+                            // Resolve cross-namespace peers for the detail view
+                            details.peers =
+                                service.resolve_peers(&current_ips, &all_ns_snapshot, inode);
 
-                                let _ = d_tx.send(Ok((details, warnings)));
-                            }
-                            Err(e) => {
-                                let _ = d_tx.send(Err(e));
-                            }
+                            let _ = d_tx.send(Ok((details, warnings)));
+                        }
+                        Err(e) => {
+                            let _ = d_tx.send(Err(e));
                         }
                     });
                 }

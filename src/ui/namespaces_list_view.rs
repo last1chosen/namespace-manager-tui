@@ -8,8 +8,9 @@ use ratatui::{
 use super::helpers::{footer_bar, proc_display_cell};
 use crate::app::App;
 use crate::models::{NamespaceType, NetworkNamespace};
+use crate::scanner::host::Host;
 
-pub fn render_list(f: &mut Frame, app: &mut App) {
+pub fn render_list<H: Host + 'static>(f: &mut Frame, app: &mut App<H>) {
     let chunks = Layout::default()
         .constraints([Constraint::Min(5), Constraint::Length(3)])
         .split(f.area());
