@@ -18,7 +18,7 @@ BINARY_NAME="nsm"
 ASSET_NAME="${BINARY_NAME}-${OS}-${ARCH}"
 
 REPO_OWNER="last1chosen"
-REPO_NAME="nsm-namespace-manager"
+REPO_NAME="namespace-manager-tui"
 
 DOWNLOAD_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/latest/download/${ASSET_NAME}"
 
